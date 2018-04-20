@@ -11,14 +11,49 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import java.util.Arrays;
 import java.util.Set;
-@ThirdMapper
+
 public class HttpmapperScanner extends ClassPathBeanDefinitionScanner{
+
+
+    private String[] mapperLocations;
+    private String[] configPaths;
+
+    public String[] getMapperLocations() {
+        return mapperLocations;
+    }
+
+    public void setMapperLocations(String[] mapperLocation) {
+        this.mapperLocations = mapperLocation;
+    }
+
+    public String[] getConfigPaths() {
+        return configPaths;
+    }
+
+    public void setConfigPaths(String[] configPath) {
+        this.configPaths = configPath;
+    }
+
+    public HttpmapperScanner(BeanDefinitionRegistry registry) {
+        super(registry);
+    }
+
 
 
     private HttpMapperFactory httpMapperFactory;
 
-    public HttpmapperScanner(BeanDefinitionRegistry registry,HttpMapperFactory httpMapperFactory) {
-        super(registry);
+    public HttpMapperFactory getHttpMapperFactory() {
+        if(httpMapperFactory==null){
+            httpMapperFactory = HttpMapperFactory
+                    .builder()
+                    .configManager(getConfigPaths())
+                    .httpmapperConfig(getMapperLocations())
+                    .build();
+        }
+        return httpMapperFactory;
+    }
+
+    public void setHttpMapperFactory(HttpMapperFactory httpMapperFactory) {
         this.httpMapperFactory = httpMapperFactory;
     }
 
@@ -42,7 +77,7 @@ public class HttpmapperScanner extends ClassPathBeanDefinitionScanner{
                     Class<?> clzz = Class.forName(name);
                     beanDefinition.setBeanClass(HttpMapperFactoryBean.class);
                     beanDefinition.getConstructorArgumentValues().addIndexedArgumentValue(0,clzz);
-                    beanDefinition.getConstructorArgumentValues().addIndexedArgumentValue(1,httpMapperFactory);
+                    beanDefinition.getConstructorArgumentValues().addIndexedArgumentValue(1,getHttpMapperFactory());
                 }
             }
             return beanDefinitionHolders;
@@ -57,10 +92,5 @@ public class HttpmapperScanner extends ClassPathBeanDefinitionScanner{
         return beanDefinition.getMetadata().isInterface() && beanDefinition.getMetadata().isIndependent();
     }
 
-    public static void main(String[] args) {
-        ThirdMapper thirdMapper = HttpmapperScanner.class.getAnnotation(ThirdMapper.class);
-        String name= thirdMapper.annotationType().getName();
-        System.out.println("name is ==>"+name);
-    }
 
 }
