@@ -9,21 +9,12 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
 
-public class HttpMapperScannerRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, EnvironmentAware {
+public class HttpMapperScannerRegistrar implements ImportBeanDefinitionRegistrar {
 
     private ResourceLoader resourceLoader;
 
     private Environment environment;
 
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
-    }
-
-    @Override
-    public void setResourceLoader(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
-    }
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
@@ -34,4 +25,5 @@ public class HttpMapperScannerRegistrar implements ImportBeanDefinitionRegistrar
         scanner.registerDefaultFilters();
         scanner.doScan(annoAttrs.getStringArray("mapperLocations"));
     }
+
 }

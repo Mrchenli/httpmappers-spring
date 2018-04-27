@@ -50,6 +50,7 @@ public class HttpmapperScanner extends ClassPathBeanDefinitionScanner{
                     .httpmapperConfig(getMapperLocations())
                     .build();
         }
+        HttpMapperFactoryAutoConfiguration.httpMapperFactory = httpMapperFactory;
         return httpMapperFactory;
     }
 
